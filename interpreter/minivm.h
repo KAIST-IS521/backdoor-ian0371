@@ -100,6 +100,8 @@ void ge(struct VMContext* ctx, const uint32_t instr);
 void eq(struct VMContext* ctx, const uint32_t instr);
 void ite(struct VMContext* ctx, const uint32_t instr);
 void jump(struct VMContext* ctx, const uint32_t instr);
+void vm_puts(struct VMContext* ctx, const uint32_t instr);
+void vm_gets(struct VMContext* ctx, const uint32_t instr);
 
 
 //---------------------------------------------------------

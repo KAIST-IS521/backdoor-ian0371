@@ -74,11 +74,19 @@ void load(struct VMContext* ctx, const uint32_t instr)
 {
     uint32_t dst = EXTRACT_B1(instr);
     uint32_t src = EXTRACT_B2(instr);
+
+    uint32_t addr = ctx->r[src].value;
+
+    if(addr >= HEAP_SIZE) {
+        printf("[Error] Segmentation Fault: "
+        "Heap Address Access Violation\n");
+        exit(1);
+    }
     
-    ctx->r[dst].value = ctx->heap[ctx->r[src].value];
+    ctx->r[dst].value = ctx->heap[addr];
 #ifdef DEBUG
     printf("Load %x, %x\n", dst, src);
-    printf("heap[%x]: %x\n", ctx->r[src].value, ctx->heap[ctx->r[src].value]);
+    printf("heap[%x]: %x\n", addr, ctx->heap[addr]);
     printf("r%x: %x\n", dst, ctx->r[dst].value);
 #endif
 }
@@ -88,12 +96,20 @@ void store(struct VMContext* ctx, const uint32_t instr)
 {
     uint32_t dst = EXTRACT_B1(instr);
     uint32_t src = EXTRACT_B2(instr);
+
+    uint32_t addr = ctx->r[dst].value;
+
+    if(addr >= HEAP_SIZE) {
+        printf("[Error] Segmentation Fault: "
+        "Heap Address Access Violation\n");
+        exit(1);
+    }
     
-    ctx->heap[ctx->r[dst].value] = ctx->r[src].value;
+    ctx->heap[addr] = ctx->r[src].value;
 #ifdef DEBUG
     printf("Store %x, %x\n", dst, src);
     printf("r%x: %x\n", src, ctx->r[src].value);
-    printf("heap[%x]: %x\n", ctx->r[dst].value, ctx->heap[ctx->r[dst].value]);
+    printf("heap[%x]: %x\n", addr, ctx->heap[addr]);
 #endif
 }
 
@@ -129,7 +145,8 @@ void add(struct VMContext* ctx, const uint32_t instr)
     uint32_t op1 = EXTRACT_B2(instr);
     uint32_t op2 = EXTRACT_B3(instr);
 
-    ctx->r[dst].value = ctx->r[op1].value + ctx->r[op2].value;
+    ctx->r[dst].value =
+        ctx->r[op1].value + ctx->r[op2].value;
 }
 
 // sub r0, r1, r2: r0 = r1 - r2
@@ -139,7 +156,8 @@ void sub(struct VMContext* ctx, const uint32_t instr)
     uint32_t op1 = EXTRACT_B2(instr);
     uint32_t op2 = EXTRACT_B3(instr);
 
-    ctx->r[dst].value = ctx->r[op1].value - ctx->r[op2].value;
+    ctx->r[dst].value =
+        ctx->r[op1].value - ctx->r[op2].value;
 }
 
 // gt r0, r1, r2: r0 = r1 > r2? 1 : 0
@@ -149,7 +167,8 @@ void gt(struct VMContext* ctx, const uint32_t instr)
     uint32_t op1 = EXTRACT_B2(instr);
     uint32_t op2 = EXTRACT_B3(instr);
 
-    ctx->r[dst].value = ctx->r[op1].value > ctx->r[op2].value ? 1 : 0;
+    ctx->r[dst].value =
+        ctx->r[op1].value > ctx->r[op2].value ? 1 : 0;
 }
 
 // ge r0, r1, r2: r0 = r1 >= r2? 1 : 0
@@ -159,7 +178,8 @@ void ge(struct VMContext* ctx, const uint32_t instr)
     uint32_t op1 = EXTRACT_B2(instr);
     uint32_t op2 = EXTRACT_B3(instr);
 
-    ctx->r[dst].value = ctx->r[op1].value >= ctx->r[op2].value ? 1 : 0;
+    ctx->r[dst].value =
+        ctx->r[op1].value >= ctx->r[op2].value ? 1 : 0;
 }
 
 // eq r0, r1, r2: r0 = r1 == r2? 1 : 0
@@ -169,7 +189,8 @@ void eq(struct VMContext* ctx, const uint32_t instr)
     uint32_t op1 = EXTRACT_B2(instr);
     uint32_t op2 = EXTRACT_B3(instr);
 
-    ctx->r[dst].value = ctx->r[op1].value == ctx->r[op2].value ? 1 : 0;
+    ctx->r[dst].value =
+        ctx->r[op1].value == ctx->r[op2].value ? 1 : 0;
 }
 
 // ite r0, i0, i1: pc = r0 > 0? i0 : i1
@@ -179,7 +200,21 @@ void ite(struct VMContext* ctx, const uint32_t instr)
     uint32_t addr1 = EXTRACT_B2(instr);
     uint32_t addr2 = EXTRACT_B3(instr);
 
-    ctx->pc = dst > 0 ? (uint32_t *)ctx->opcode + addr1 : (uint32_t *)ctx->opcode + addr2;
+    if(addr1 * 4 >= ctx->codesize) {
+        printf("[Error] Segmentation Fault: "
+        "Code Address Access Violation\n");
+        exit(1);
+    }
+
+    if(addr2 * 4 >= ctx->codesize) {
+        printf("[Error] Segmentation Fault: "
+        "Code Address Access Violation\n");
+        exit(1);
+    }
+
+    ctx->pc = dst > 0 ?
+              (uint32_t *)ctx->opcode + addr1:
+              (uint32_t *)ctx->opcode + addr2;
     ctx->pc--; // to be consistent with stepVMContext
 }
 
@@ -188,7 +223,42 @@ void jump(struct VMContext* ctx, const uint32_t instr)
 {
     uint32_t addr = EXTRACT_B1(instr);
 
+    if(addr * 4 >= ctx->codesize) {
+        printf("[Error] Segmentation Fault: "
+        "Code Address Access Violation\n");
+        exit(1);
+    }
+
     ctx->pc = (uint32_t *)ctx->opcode + addr;
     ctx->pc--; // to be consistent with stepVMContext
+}
+
+void vm_puts(struct VMContext* ctx, const uint32_t instr)
+{
+    uint32_t reg = EXTRACT_B1(instr);
+    uint32_t addr = ctx->r[reg].value;
+    if(addr >= HEAP_SIZE) {
+        printf("[Error] Segmentation Fault: "
+        "Heap Address Access Violation\n");
+        exit(1);
+    }
+    printf("%s", (char *)(ctx->heap + addr));
+}
+
+void vm_gets(struct VMContext* ctx, const uint32_t instr)
+{
+    uint32_t reg = EXTRACT_B1(instr);
+    uint32_t i;
+    uint8_t ch;
+
+    for(i = ctx->r[reg].value; (ch = getchar()) != '\n'; ++i) {
+        if(i >= HEAP_SIZE - 1) {
+            printf("[Error] Segmentation Fault: "
+            "Heap Address Access Violation\n");
+            exit(1);
+        }
+        ctx->heap[i] = ch;
+    }
+    ctx->heap[i] = '\0';
 }
 

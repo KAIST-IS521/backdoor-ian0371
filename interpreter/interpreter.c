@@ -35,7 +35,8 @@ void initFuncs(FunPtr *f, uint32_t cnt) {
     f[0x90] = eq;
     f[0xa0] = ite;
     f[0xb0] = jump;
-
+    f[0xc0] = vm_puts;
+    f[0xd0] = vm_gets;
 }
 
 void initRegs(Reg *r, uint32_t cnt)
