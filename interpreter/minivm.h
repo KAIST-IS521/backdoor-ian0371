@@ -93,6 +93,9 @@ void move(struct VMContext* ctx, const uint32_t instr);
 void puti(struct VMContext* ctx, const uint32_t instr);
 void add(struct VMContext* ctx, const uint32_t instr);
 void sub(struct VMContext* ctx, const uint32_t instr);
+void gt(struct VMContext* ctx, const uint32_t instr);
+void ge(struct VMContext* ctx, const uint32_t instr);
+void eq(struct VMContext* ctx, const uint32_t instr);
 
 
 //---------------------------------------------------------
