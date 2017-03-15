@@ -10,11 +10,17 @@
 #define NUM_FUNCS  (256)
 
 // Global variable that indicates if the process is running.
-static bool is_running = true;
+bool is_running = true;
 
 void usageExit() {
-    // TODO: show usage
+	printf("Usage: ./interpreter <vm_binary>\n");
     exit(1);
+}
+
+void test(struct VMContext* ctx, const uint32_t x)
+{
+    printf("halting...\n");
+    is_running = false;
 }
 
 void initFuncs(FunPtr *f, uint32_t cnt) {
@@ -24,7 +30,7 @@ void initFuncs(FunPtr *f, uint32_t cnt) {
     }
 
     // TODO: initialize function pointers
-    // f[0x00] = halt;
+    f[0x00] = test;
     // f[0x10] = load;
 }
 
@@ -44,6 +50,10 @@ int main(int argc, char** argv) {
     FILE* bytecode;
     uint32_t* pc;
 
+
+    uint32_t codesize;
+    uint8_t *opcode;
+
     // There should be at least one argument.
     if (argc < 2) usageExit();
 
@@ -61,12 +71,18 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    fseek(bytecode, 0L, SEEK_END);
+    codesize = ftell(bytecode);
+    fseek(bytecode, 0L, SEEK_SET);
+
+    opcode = (uint8_t *)malloc(codesize + 1);
+    fread(opcode, sizeof(uint8_t), codesize, bytecode);
+    pc = (uint32_t *)opcode;
+    fclose(bytecode);
+
     while (is_running) {
-        // TODO: Read 4-byte bytecode, and set the pc accordingly
         stepVMContext(&vm, &pc);
     }
-
-    fclose(bytecode);
 
     // Zero indicates normal termination.
     return 0;
