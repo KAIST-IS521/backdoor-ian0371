@@ -91,6 +91,8 @@ void load(struct VMContext* ctx, const uint32_t instr);
 void store(struct VMContext* ctx, const uint32_t instr);
 void move(struct VMContext* ctx, const uint32_t instr);
 void puti(struct VMContext* ctx, const uint32_t instr);
+void add(struct VMContext* ctx, const uint32_t instr);
+void sub(struct VMContext* ctx, const uint32_t instr);
 
 
 //---------------------------------------------------------

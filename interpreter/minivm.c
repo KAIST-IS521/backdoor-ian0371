@@ -53,6 +53,12 @@ void stepVMContext(struct VMContext* ctx, uint32_t** pc) {
     (*pc)++;
 }
 
+
+
+//---------------------------------------------------------
+// OPCODES
+
+// halt: halt current proces
 void halt(struct VMContext* ctx __attribute__((unused)),
           const uint32_t instr __attribute__((unused)))
 {
@@ -62,6 +68,7 @@ void halt(struct VMContext* ctx __attribute__((unused)),
 #endif
 }
 
+// load r0, r1: r0 = heap[r1]
 void load(struct VMContext* ctx, const uint32_t instr)
 {
     uint32_t dst = EXTRACT_B1(instr);
@@ -75,6 +82,7 @@ void load(struct VMContext* ctx, const uint32_t instr)
 #endif
 }
 
+// store r0, r1: heap[r0] = r1
 void store(struct VMContext* ctx, const uint32_t instr)
 {
     uint32_t dst = EXTRACT_B1(instr);
@@ -88,6 +96,7 @@ void store(struct VMContext* ctx, const uint32_t instr)
 #endif
 }
 
+// move r0, r1: r0 = r1
 void move(struct VMContext* ctx, const uint32_t instr)
 {
     uint32_t dst = EXTRACT_B1(instr);
@@ -100,6 +109,7 @@ void move(struct VMContext* ctx, const uint32_t instr)
 #endif
 }
 
+// puti r0, i0: r0 = i0
 void puti(struct VMContext* ctx, const uint32_t instr)
 {
     uint32_t dst = EXTRACT_B1(instr);
@@ -110,3 +120,24 @@ void puti(struct VMContext* ctx, const uint32_t instr)
     printf("r%x: %x\n", dst, ctx->r[dst].value);
 #endif
 }
+
+// add r0, r1, r2: r0 = r1 + r2
+void add(struct VMContext* ctx, const uint32_t instr)
+{
+    uint32_t dst = EXTRACT_B1(instr);
+    uint32_t op1 = EXTRACT_B2(instr);
+    uint32_t op2 = EXTRACT_B3(instr);
+
+    ctx->r[dst].value = ctx->r[op1].value + ctx->r[op2].value;
+}
+
+// sub r0, r1, r2: r0 = r1 - r2
+void sub(struct VMContext* ctx, const uint32_t instr)
+{
+    uint32_t dst = EXTRACT_B1(instr);
+    uint32_t op1 = EXTRACT_B2(instr);
+    uint32_t op2 = EXTRACT_B3(instr);
+
+    ctx->r[dst].value = ctx->r[op1].value - ctx->r[op2].value;
+}
+
