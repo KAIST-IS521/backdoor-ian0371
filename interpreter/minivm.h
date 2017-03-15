@@ -78,6 +78,11 @@ void initVMContext(struct VMContext* ctx,
 // stepVMContext :: VMContext -> uint32_t** -> Effect()
 void stepVMContext(struct VMContext* ctx, uint32_t** pc);
 
+//---------------------------------------------------------
+// OPCODES
+
+void halt(struct VMContext* ctx, const uint32_t instr  __attribute__((unused)));
+
 
 //---------------------------------------------------------
 #endif //ifndef MINIVM_H

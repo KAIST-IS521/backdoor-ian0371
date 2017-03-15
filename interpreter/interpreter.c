@@ -17,12 +17,6 @@ void usageExit() {
     exit(1);
 }
 
-void test(struct VMContext* ctx, const uint32_t x)
-{
-    printf("halting...\n");
-    is_running = false;
-}
-
 void initFuncs(FunPtr *f, uint32_t cnt) {
     uint32_t i;
     for (i = 0; i < cnt; i++) {
@@ -30,7 +24,7 @@ void initFuncs(FunPtr *f, uint32_t cnt) {
     }
 
     // TODO: initialize function pointers
-    f[0x00] = test;
+    f[0x00] = halt;
     // f[0x10] = load;
 }
 

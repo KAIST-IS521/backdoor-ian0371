@@ -4,8 +4,12 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <stdlib.h>
+#include <stdbool.h>
+
 #include "minivm.h"
 
+extern bool is_running;
 
 //---------------------------------------------------------
 // FUNCTION IMPLEMENTATIONS:
@@ -40,5 +44,10 @@ void stepVMContext(struct VMContext* ctx, uint32_t** pc) {
 
     // Increment to next instruction.
     (*pc)++;
+}
+
+void halt(struct VMContext* ctx, const uint32_t instr __attribute__((unused)))
+{
+    is_running = false;
 }
 
