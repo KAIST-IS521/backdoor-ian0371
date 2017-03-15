@@ -40,6 +40,8 @@ typedef struct VMContext {
     uint32_t numFuns;
     Reg* r;           // Ptr to register array.
     FunPtr* funtable; // Ptr to a funptr table.
+
+    uint32_t* pc;
     uint8_t *opcode;
     uint32_t codesize;
     uint8_t heap[HEAP_SIZE];
@@ -81,7 +83,7 @@ void initVMContext(struct VMContext* ctx,
 
 // Reads an instruction, executes it, then steps to the next instruction.
 // stepVMContext :: VMContext -> uint32_t** -> Effect()
-void stepVMContext(struct VMContext* ctx, uint32_t** pc);
+void stepVMContext(struct VMContext* ctx);
 
 //---------------------------------------------------------
 // OPCODES
@@ -96,6 +98,8 @@ void sub(struct VMContext* ctx, const uint32_t instr);
 void gt(struct VMContext* ctx, const uint32_t instr);
 void ge(struct VMContext* ctx, const uint32_t instr);
 void eq(struct VMContext* ctx, const uint32_t instr);
+void ite(struct VMContext* ctx, const uint32_t instr);
+void jump(struct VMContext* ctx, const uint32_t instr);
 
 
 //---------------------------------------------------------

@@ -34,6 +34,7 @@ void initVMContext(struct VMContext* ctx, const uint32_t numRegs, const uint32_t
     ctx->numFuns    = numFuns;
     ctx->r          = registers;
     ctx->funtable   = funtable;
+    ctx->pc         = 0;
     ctx->opcode     = 0;
     ctx->codesize   = 0;
     memset(ctx->heap, 0, HEAP_SIZE);
@@ -42,15 +43,15 @@ void initVMContext(struct VMContext* ctx, const uint32_t numRegs, const uint32_t
 
 // Reads an instruction, executes it, then steps to the next instruction.
 // stepVMContext :: VMContext -> uint32_t** -> Effect()
-void stepVMContext(struct VMContext* ctx, uint32_t** pc) {
+void stepVMContext(struct VMContext* ctx) {
     // Read a 32-bit bytecode instruction.
-    uint32_t instr = **pc;
+    uint32_t instr = *ctx->pc;
 
     // Dispatch to an opcode-handler.
     dispatch(ctx, instr);
 
     // Increment to next instruction.
-    (*pc)++;
+    ctx->pc++;
 }
 
 
@@ -169,5 +170,25 @@ void eq(struct VMContext* ctx, const uint32_t instr)
     uint32_t op2 = EXTRACT_B3(instr);
 
     ctx->r[dst].value = ctx->r[op1].value == ctx->r[op2].value ? 1 : 0;
+}
+
+// ite r0, i0, i1: pc = r0 > 0? i0 : i1
+void ite(struct VMContext* ctx, const uint32_t instr)
+{
+    uint32_t dst = EXTRACT_B1(instr);
+    uint32_t addr1 = EXTRACT_B2(instr);
+    uint32_t addr2 = EXTRACT_B3(instr);
+
+    ctx->pc = dst > 0 ? (uint32_t *)ctx->opcode + addr1 : (uint32_t *)ctx->opcode + addr2;
+    ctx->pc--; // to be consistent with stepVMContext
+}
+
+// jump i0: pc = i0
+void jump(struct VMContext* ctx, const uint32_t instr)
+{
+    uint32_t addr = EXTRACT_B1(instr);
+
+    ctx->pc = (uint32_t *)ctx->opcode + addr;
+    ctx->pc--; // to be consistent with stepVMContext
 }
 

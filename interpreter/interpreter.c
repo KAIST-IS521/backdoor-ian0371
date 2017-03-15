@@ -23,7 +23,6 @@ void initFuncs(FunPtr *f, uint32_t cnt) {
         f[i] = NULL;
     }
 
-    // TODO: initialize function pointers
     f[0x00] = halt;
     f[0x10] = load;
     f[0x20] = store;
@@ -34,6 +33,9 @@ void initFuncs(FunPtr *f, uint32_t cnt) {
     f[0x70] = gt;
     f[0x80] = ge;
     f[0x90] = eq;
+    f[0xa0] = ite;
+    f[0xb0] = jump;
+
 }
 
 void initRegs(Reg *r, uint32_t cnt)
@@ -50,7 +52,6 @@ int main(int argc, char** argv) {
     Reg r[NUM_REGS];
     FunPtr f[NUM_FUNCS];
     FILE* bytecode;
-    uint32_t* pc;
 
     // There should be at least one argument.
     if (argc < 2) usageExit();
@@ -75,11 +76,11 @@ int main(int argc, char** argv) {
 
     vm.opcode = (uint8_t *)malloc(vm.codesize + 1);
     fread(vm.opcode, sizeof(uint8_t), vm.codesize, bytecode);
-    pc = (uint32_t *)vm.opcode;
+    vm.pc = (uint32_t *)vm.opcode;
     fclose(bytecode);
 
     while (is_running) {
-        stepVMContext(&vm, &pc);
+        stepVMContext(&vm);
     }
 
     // Zero indicates normal termination.
