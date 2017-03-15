@@ -19,6 +19,8 @@
 
 #define MVM_NUM_REGISTERS 16 // Default
 
+#define HEAP_SIZE    8192
+
 
 //---------------------------------------------------------
 // DATA STRUCTURES & TYPEDEFS:
@@ -38,6 +40,9 @@ typedef struct VMContext {
     uint32_t numFuns;
     Reg* r;           // Ptr to register array.
     FunPtr* funtable; // Ptr to a funptr table.
+    uint8_t *opcode;
+    uint32_t codesize;
+    uint8_t heap[HEAP_SIZE];
 } VMContext;
 
 
@@ -82,6 +87,10 @@ void stepVMContext(struct VMContext* ctx, uint32_t** pc);
 // OPCODES
 
 void halt(struct VMContext* ctx, const uint32_t instr  __attribute__((unused)));
+void load(struct VMContext* ctx, const uint32_t instr);
+void store(struct VMContext* ctx, const uint32_t instr);
+void move(struct VMContext* ctx, const uint32_t instr);
+void puti(struct VMContext* ctx, const uint32_t instr);
 
 
 //---------------------------------------------------------

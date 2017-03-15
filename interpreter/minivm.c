@@ -4,10 +4,14 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "minivm.h"
+
+#define DEBUG
 
 extern bool is_running;
 
@@ -30,6 +34,9 @@ void initVMContext(struct VMContext* ctx, const uint32_t numRegs, const uint32_t
     ctx->numFuns    = numFuns;
     ctx->r          = registers;
     ctx->funtable   = funtable;
+    ctx->opcode     = 0;
+    ctx->codesize   = 0;
+    memset(ctx->heap, 0, HEAP_SIZE);
 }
 
 
@@ -46,8 +53,60 @@ void stepVMContext(struct VMContext* ctx, uint32_t** pc) {
     (*pc)++;
 }
 
-void halt(struct VMContext* ctx, const uint32_t instr __attribute__((unused)))
+void halt(struct VMContext* ctx __attribute__((unused)),
+          const uint32_t instr __attribute__((unused)))
 {
     is_running = false;
+#ifdef DEBUG
+    printf("Halt\n");
+#endif
 }
 
+void load(struct VMContext* ctx, const uint32_t instr)
+{
+    uint32_t dst = EXTRACT_B1(instr);
+    uint32_t src = EXTRACT_B2(instr);
+    
+    ctx->r[dst].value = ctx->heap[ctx->r[src].value];
+#ifdef DEBUG
+    printf("Load %x, %x\n", dst, src);
+    printf("heap[%x]: %x\n", ctx->r[src].value, ctx->heap[ctx->r[src].value]);
+    printf("r%x: %x\n", dst, ctx->r[dst].value);
+#endif
+}
+
+void store(struct VMContext* ctx, const uint32_t instr)
+{
+    uint32_t dst = EXTRACT_B1(instr);
+    uint32_t src = EXTRACT_B2(instr);
+    
+    ctx->heap[ctx->r[dst].value] = ctx->r[src].value;
+#ifdef DEBUG
+    printf("Store %x, %x\n", dst, src);
+    printf("r%x: %x\n", src, ctx->r[src].value);
+    printf("heap[%x]: %x\n", ctx->r[dst].value, ctx->heap[ctx->r[dst].value]);
+#endif
+}
+
+void move(struct VMContext* ctx, const uint32_t instr)
+{
+    uint32_t dst = EXTRACT_B1(instr);
+    uint32_t src = EXTRACT_B2(instr);
+    ctx->r[dst].value = ctx->r[src].value;
+#ifdef DEBUG
+    printf("Move %x, %x\n", dst, src);
+    printf("r%x: %x\n", src, ctx->r[src].value);
+    printf("r%x: %x\n", dst, ctx->r[dst].value);
+#endif
+}
+
+void puti(struct VMContext* ctx, const uint32_t instr)
+{
+    uint32_t dst = EXTRACT_B1(instr);
+    uint32_t src = EXTRACT_B2(instr);
+    ctx->r[dst].value = src;
+#ifdef DEBUG
+    printf("PutI %x, %x\n", dst, src);
+    printf("r%x: %x\n", dst, ctx->r[dst].value);
+#endif
+}
