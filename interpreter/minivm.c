@@ -11,7 +11,7 @@
 
 #include "minivm.h"
 
-#define DEBUG
+//#define DEBUG
 
 extern bool is_running;
 
@@ -212,7 +212,7 @@ void ite(struct VMContext* ctx, const uint32_t instr)
         exit(1);
     }
 
-    ctx->pc = dst > 0 ?
+    ctx->pc = ctx->r[dst].value > 0 ?
               (uint32_t *)ctx->opcode + addr1:
               (uint32_t *)ctx->opcode + addr2;
     ctx->pc--; // to be consistent with stepVMContext
