@@ -72,8 +72,8 @@ void halt(struct VMContext* ctx __attribute__((unused)),
 // load r0, r1: r0 = heap[r1]
 void load(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t dst = EXTRACT_B1(instr);
-    uint32_t src = EXTRACT_B2(instr);
+    uint8_t dst = EXTRACT_B1(instr);
+    uint8_t src = EXTRACT_B2(instr);
 
     uint32_t addr = ctx->r[src].value;
 
@@ -94,8 +94,8 @@ void load(struct VMContext* ctx, const uint32_t instr)
 // store r0, r1: heap[r0] = r1
 void store(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t dst = EXTRACT_B1(instr);
-    uint32_t src = EXTRACT_B2(instr);
+    uint8_t dst = EXTRACT_B1(instr);
+    uint8_t src = EXTRACT_B2(instr);
 
     uint32_t addr = ctx->r[dst].value;
 
@@ -116,8 +116,8 @@ void store(struct VMContext* ctx, const uint32_t instr)
 // move r0, r1: r0 = r1
 void move(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t dst = EXTRACT_B1(instr);
-    uint32_t src = EXTRACT_B2(instr);
+    uint8_t dst = EXTRACT_B1(instr);
+    uint8_t src = EXTRACT_B2(instr);
     ctx->r[dst].value = ctx->r[src].value;
 #ifdef DEBUG
     printf("Move %x, %x\n", dst, src);
@@ -129,8 +129,8 @@ void move(struct VMContext* ctx, const uint32_t instr)
 // puti r0, i0: r0 = i0
 void puti(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t dst = EXTRACT_B1(instr);
-    uint32_t src = EXTRACT_B2(instr);
+    uint8_t dst = EXTRACT_B1(instr);
+    uint8_t src = EXTRACT_B2(instr);
     ctx->r[dst].value = src;
 #ifdef DEBUG
     printf("PutI %x, %x\n", dst, src);
@@ -141,9 +141,9 @@ void puti(struct VMContext* ctx, const uint32_t instr)
 // add r0, r1, r2: r0 = r1 + r2
 void add(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t dst = EXTRACT_B1(instr);
-    uint32_t op1 = EXTRACT_B2(instr);
-    uint32_t op2 = EXTRACT_B3(instr);
+    uint8_t dst = EXTRACT_B1(instr);
+    uint8_t op1 = EXTRACT_B2(instr);
+    uint8_t op2 = EXTRACT_B3(instr);
 
     ctx->r[dst].value =
         ctx->r[op1].value + ctx->r[op2].value;
@@ -152,9 +152,9 @@ void add(struct VMContext* ctx, const uint32_t instr)
 // sub r0, r1, r2: r0 = r1 - r2
 void sub(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t dst = EXTRACT_B1(instr);
-    uint32_t op1 = EXTRACT_B2(instr);
-    uint32_t op2 = EXTRACT_B3(instr);
+    uint8_t dst = EXTRACT_B1(instr);
+    uint8_t op1 = EXTRACT_B2(instr);
+    uint8_t op2 = EXTRACT_B3(instr);
 
     ctx->r[dst].value =
         ctx->r[op1].value - ctx->r[op2].value;
@@ -163,9 +163,9 @@ void sub(struct VMContext* ctx, const uint32_t instr)
 // gt r0, r1, r2: r0 = r1 > r2? 1 : 0
 void gt(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t dst = EXTRACT_B1(instr);
-    uint32_t op1 = EXTRACT_B2(instr);
-    uint32_t op2 = EXTRACT_B3(instr);
+    uint8_t dst = EXTRACT_B1(instr);
+    uint8_t op1 = EXTRACT_B2(instr);
+    uint8_t op2 = EXTRACT_B3(instr);
 
     ctx->r[dst].value =
         ctx->r[op1].value > ctx->r[op2].value ? 1 : 0;
@@ -174,9 +174,9 @@ void gt(struct VMContext* ctx, const uint32_t instr)
 // ge r0, r1, r2: r0 = r1 >= r2? 1 : 0
 void ge(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t dst = EXTRACT_B1(instr);
-    uint32_t op1 = EXTRACT_B2(instr);
-    uint32_t op2 = EXTRACT_B3(instr);
+    uint8_t dst = EXTRACT_B1(instr);
+    uint8_t op1 = EXTRACT_B2(instr);
+    uint8_t op2 = EXTRACT_B3(instr);
 
     ctx->r[dst].value =
         ctx->r[op1].value >= ctx->r[op2].value ? 1 : 0;
@@ -185,9 +185,9 @@ void ge(struct VMContext* ctx, const uint32_t instr)
 // eq r0, r1, r2: r0 = r1 == r2? 1 : 0
 void eq(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t dst = EXTRACT_B1(instr);
-    uint32_t op1 = EXTRACT_B2(instr);
-    uint32_t op2 = EXTRACT_B3(instr);
+    uint8_t dst = EXTRACT_B1(instr);
+    uint8_t op1 = EXTRACT_B2(instr);
+    uint8_t op2 = EXTRACT_B3(instr);
 
     ctx->r[dst].value =
         ctx->r[op1].value == ctx->r[op2].value ? 1 : 0;
@@ -196,9 +196,9 @@ void eq(struct VMContext* ctx, const uint32_t instr)
 // ite r0, i0, i1: pc = r0 > 0? i0 : i1
 void ite(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t dst = EXTRACT_B1(instr);
-    uint32_t addr1 = EXTRACT_B2(instr);
-    uint32_t addr2 = EXTRACT_B3(instr);
+    uint8_t dst = EXTRACT_B1(instr);
+    uint8_t addr1 = EXTRACT_B2(instr);
+    uint8_t addr2 = EXTRACT_B3(instr);
 
     if(addr1 * 4 >= ctx->codesize) {
         printf("[Error] Segmentation Fault: "
@@ -221,7 +221,7 @@ void ite(struct VMContext* ctx, const uint32_t instr)
 // jump i0: pc = i0
 void jump(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t addr = EXTRACT_B1(instr);
+    uint8_t addr = EXTRACT_B1(instr);
 
     if(addr * 4 >= ctx->codesize) {
         printf("[Error] Segmentation Fault: "
@@ -235,7 +235,8 @@ void jump(struct VMContext* ctx, const uint32_t instr)
 
 void vm_puts(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t reg = EXTRACT_B1(instr);
+    uint8_t reg = EXTRACT_B1(instr);
+
     uint32_t addr = ctx->r[reg].value;
     if(addr >= HEAP_SIZE) {
         printf("[Error] Segmentation Fault: "
@@ -247,7 +248,8 @@ void vm_puts(struct VMContext* ctx, const uint32_t instr)
 
 void vm_gets(struct VMContext* ctx, const uint32_t instr)
 {
-    uint32_t reg = EXTRACT_B1(instr);
+    uint8_t reg = EXTRACT_B1(instr);
+
     uint32_t i;
     uint8_t ch;
 
