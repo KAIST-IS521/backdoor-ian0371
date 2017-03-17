@@ -1,5 +1,7 @@
-test/*
 *.o
 *.a
 *.swp
 build
+*.bytecode
+.gdb_history
+peda*
