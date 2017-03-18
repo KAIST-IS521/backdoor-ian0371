@@ -23,7 +23,18 @@ extern bool is_running;
 // dispatch :: VMContext -> uint32_t -> Effect()
 void dispatch(struct VMContext* ctx, const uint32_t instr) {
     const uint8_t i = EXTRACT_B0(instr);
-    (*ctx->funtable[i])(ctx, instr);
+    switch(i) {
+    case 0x00: case 0x10: case 0x20:
+    case 0x30: case 0x40: case 0x50:
+    case 0x60: case 0x70: case 0x80:
+    case 0x90: case 0xa0: case 0xb0:
+    case 0xc0: case 0xd0:
+        (*ctx->funtable[i])(ctx, instr);
+        break;
+    default:
+        printf("Illegal Instruction\n");
+        exit(1);
+    }
 }
 
 
