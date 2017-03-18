@@ -38,19 +38,19 @@ It will exceed 80 columns. Continue? (y/n)
 ### Pseudocode
 ```C
 unsigned int atoi(char *s) {
-	int n = 0;
-	while(*s != 0) {
-		n *= 10;
-		/*
-		tmp = n;
-		tmp = tmp + tmp;
-		tmp = tmp + tmp;
-		tmp = tmp + tmp;
-		tmp2 = n + n;
-		tmp = tmp + tmp2;
-		*/
-		n += ch[i] - '0';
-	}
+    int n = 0;
+    while(*s != 0) {
+        n *= 10;
+        /*
+        tmp = n;
+        tmp = tmp + tmp;
+        tmp = tmp + tmp;
+        tmp = tmp + tmp;
+        tmp2 = n + n;
+        tmp = tmp + tmp2;
+        */
+        n += ch[i] - '0';
+    }
 }
 
 void main() {
