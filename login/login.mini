@@ -116,28 +116,37 @@ puti r0, 38
 puti r1, 115
 store r0, r1
 puti r0, 39
-puti r1, 0
+puti r1, 10
 store r0, r1
 puti r0, 40
-puti r1, 70
+puti r1, 0
 store r0, r1
 puti r0, 41
-puti r1, 97
+puti r1, 70
 store r0, r1
 puti r0, 42
-puti r1, 105
+puti r1, 97
 store r0, r1
 puti r0, 43
-puti r1, 108
+puti r1, 105
 store r0, r1
 puti r0, 44
-puti r1, 117
+puti r1, 108
 store r0, r1
 puti r0, 45
-puti r1, 114
+puti r1, 117
 store r0, r1
 puti r0, 46
+puti r1, 114
+store r0, r1
+puti r0, 47
 puti r1, 101
+store r0, r1
+puti r0, 48
+puti r1, 10
+store r0, r1
+puti r0, 49
+puti r1, 0
 store r0, r1
 puti r1, 255
 puti r200, 1
@@ -152,11 +161,11 @@ add r255, r255, r200
 load r252, r254
 add r254, r254, r200
 eq r253, r251, r250
-ite r253, 157, 155
+ite r253, 166, 164
 eq r253, r251, r252
-ite r253, 149, 157
+ite r253, 158, 166
 sub r0, r251, r252
-ite r0, 177, 159
+ite r0, 186, 168
 puti r0, 12
 puts r0
 gets r1
@@ -168,13 +177,14 @@ add r255, r255, r200
 load r252, r254
 add r254, r254, r200
 eq r253, r251, r250
-ite r253, 173, 171
+ite r253, 182, 180
 eq r253, r251, r252
-ite r253, 165, 173
+ite r253, 174, 182
 sub r0, r251, r252
-ite r0, 177, 175
+ite r0, 186, 184
 puti r0, 32
-jump 178
-puti r0, 40
+jump 187
+puti r0, 41
 puts r0
 halt
+
