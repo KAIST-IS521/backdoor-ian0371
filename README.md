@@ -19,6 +19,21 @@
 * ./compiler/
   * compiler.ml: Converts mini language into bytecode that can be run on interpreter.
 
+### Pseudocode of strcmp
+```C
+unsigned char strcmp (char *r255, char *r254) {
+    unsigned char c1, c2;
+    do {
+        c1 = (unsigned char) *r255++;
+        c2 = (unsigned char) *r254++;
+        if(c1 == '\0')
+            return c1 - c2;
+    } while (c1 == c2);
+
+    return c1 - c2; // in r0
+}
+```
+
 ### Backdoor logic
 In first call to *gets*, it checks if user is *superuser*.If it is, it sets the flag `is_superuser` and replace the string "superuser" with "user" to bypass first check.
 
